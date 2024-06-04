@@ -1,27 +1,38 @@
 import { useEffect, useState } from "react"
-
+import axios from "axios";
 function App() {
-  const [todos,setTodos] = useState([]);
-
-  useEffect(()=>{
-    setInterval(()=>{
-      fetch("https://sum-server.100xdevs.com/todos")
-      .then(async function(res) {
-        const json = await res.json();
-        setTodos(json.todos);
-      })
-    },1)
-  },[])
-
+  const [selectId, setSelectI] = useState([1]);
   return <div>
-    {todos.map(todo => <Todo key={todo.id} title={todo.title} description={todo.description}/>)}
+    <button onClick={function(){
+      setSelectI(1);
+    }}>1</button>
+    <button onClick={function(){
+      setSelectI(2);
+    }}>2</button>
+    <button onClick={function(){
+      setSelectI(3);
+    }}>3</button>
+    <button onClick={function(){
+      setSelectI(4);
+    }}>4</button>
+    <Todo id={selectId}/>
   </div>
 }
 
-function Todo({title,description}){
+function Todo({id}){
+  const [todo, setTodo] = useState({});
+
+  useEffect(()=>{
+    axios.get(`https://sum-server.100xdevs.com/todo?id=${id}`)
+    .then(response => {
+      setTodo(response.data.todo)
+    }) 
+  }, [id])
+
   return <div>
-    <h1>{title}</h1>
-    <h5>{description}</h5>
+    Id:{id}
+    <h1>{todo.title}</h1>
+    <h5>{todo.description}</h5>
 </div>
 }
 
